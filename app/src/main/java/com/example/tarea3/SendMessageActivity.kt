@@ -1,7 +1,6 @@
 package com.example.tarea3
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
@@ -18,23 +17,22 @@ class SendMessageActivity : AppCompatActivity() {
 
         btnSend.setOnClickListener {
             val message = etMessage.text.toString()
+
             if (message.isNotEmpty()) {
-                sendWhatsAppMessage(message)
+                shareMessage(message)
             } else {
                 Toast.makeText(this, "Por favor, escribe un mensaje", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun sendWhatsAppMessage(message: String) {
-        try {
-            val intent = Intent(Intent.ACTION_VIEW).apply {
-                data = Uri.parse("https://wa.me/?text=" + Uri.encode(message))
-                setPackage("com.whatsapp") // Especificamos que queremos abrir WhatsApp
-            }
-            startActivity(intent)
-        } catch (e: Exception) {
-            Toast.makeText(this, "WhatsApp no está instalado", Toast.LENGTH_SHORT).show()
+    private fun shareMessage(message: String) {
+        val intent = Intent(Intent.ACTION_SEND).apply {
+            type = "text/plain"  // Especificamos que el contenido es texto
+            putExtra(Intent.EXTRA_TEXT, message)  // Enviamos el mensaje como EXTRA
         }
+
+        val chooser = Intent.createChooser(intent, "Compartir mensaje con:")
+        startActivity(chooser) // Muestra la lista de apps disponibles
     }
 }
